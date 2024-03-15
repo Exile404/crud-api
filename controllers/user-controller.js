@@ -1,10 +1,12 @@
 import User from "../models/user-model.js";
 import createError from "../utils/createError.js";
-import bcrypt from "bcrypt";
+
+import argon2 from "argon2";
+
 
 export const createUser = async (req, res, next) => {
     try {
-      const hash = bcrypt.hashSync(req.body.password, 5);
+      const hash = await argon2.hash(req.body.password, 5);
       const newUser = new User({
         ...req.body,
         password: hash,
@@ -37,7 +39,7 @@ export const deleteUser = async (req, res, next) => {
 
 
 export const updateUser = async (req, res, next) => {
-  const hash = bcrypt.hashSync(req.body.password, 5);
+  const hash = await argon2.hash(req.body.password, 5);
 
   try {
     const updatedUser = await User.findByIdAndUpdate(req.params.id, {
